@@ -40,6 +40,12 @@ public class GeneticTest {
         assertEquals(locus.getRight(), AlleleExample.A);
         assertEquals(locus.getDominant(), AlleleExample.A);
         assertEquals(locus.toString(), "b-a");
+
+        //Testing .equals for hash maps and other things that rely on them
+        Locus<AlleleExample> manualLocus = new Locus<>();
+        manualLocus.setup(AlleleExample.B, AlleleExample.A);
+        assertEquals(locus, manualLocus);
+        assertEquals(locus.hashCode(), manualLocus.hashCode());
     }
 
     private enum AlleleExample implements Allele {
