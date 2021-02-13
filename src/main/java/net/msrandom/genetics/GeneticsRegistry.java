@@ -26,7 +26,7 @@ public class GeneticsRegistry {
 
         public Gene(Class<T> geneticClass) {
             this.values = geneticClass.getEnumConstants();
-            this.size = (Integer.toBinaryString(values.length).length() - 1) * 2;
+            this.size = (31 - Integer.numberOfLeadingZeros(values.length)) * 2;
         }
 
         public int getSize() {

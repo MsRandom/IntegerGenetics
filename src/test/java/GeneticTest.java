@@ -2,7 +2,7 @@ import net.msrandom.genetics.Allele;
 import net.msrandom.genetics.GeneticsRegistry;
 import net.msrandom.genetics.GenotypeHandler;
 import net.msrandom.genetics.Locus;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -16,13 +16,20 @@ public class GeneticTest {
     static GeneticsRegistry registry;
     static GenotypeHandler handler;
     static GeneticsRegistry.Gene<AlleleExample> geneExample;
+    static GeneticsRegistry.Gene<AlleleExample> geneExample2;
 
-    @BeforeAll
-    public static void setup() {
+    @BeforeEach
+    public void setUp() {
         genetics = new ArrayList<>();
         registry = new GeneticsRegistry(genetics::size, () -> genetics.add(0));
         handler = new GenotypeHandler(genetics::get, genetics::set);
-        geneExample = registry.register(new GeneticsRegistry.Gene<>(AlleleExample.class));
+        GeneticsRegistry.Gene<AlleleExample> gene = new GeneticsRegistry.Gene<>(AlleleExample.class);
+        geneExample = registry.register(gene);
+        for (int i = 0; i < 31; i++) {
+            registry.register(gene);
+        }
+        geneExample2 = registry.register(gene);
+
     }
 
     @Test
@@ -40,6 +47,11 @@ public class GeneticTest {
         assertEquals(locus.getRight(), AlleleExample.A);
         assertEquals(locus.getDominant(), AlleleExample.A);
         assertEquals(locus.toString(), "b-a");
+
+        handler.set(geneExample2, AlleleExample.B, AlleleExample.A);
+        locus = handler.get(geneExample2);
+        assertEquals(locus.getLeft(), AlleleExample.B);
+        assertEquals(locus.getRight(), AlleleExample.A);
 
         //Testing .equals for hash maps and other things that rely on them
         Locus<AlleleExample> manualLocus = new Locus<>();
