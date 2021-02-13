@@ -16,7 +16,7 @@ plugins {
 apply plugin: "com.jfrog.artifactory"
 
 group = "net.msrandom.genetics"
-version = "1.0.3"
+version = "1.0.4"
 archivesBaseName = "IntegerGenetics"
 
 repositories {

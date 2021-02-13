@@ -29,11 +29,11 @@ public class GeneticsRegistry {
             this.size = (31 - Integer.numberOfLeadingZeros(values.length)) * 2;
         }
 
-        public int getSize() {
+        int getSize() {
             return size;
         }
 
-        public int getPos() {
+        int getPos() {
             return pos;
         }
     }
