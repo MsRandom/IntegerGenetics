@@ -7,6 +7,8 @@ public class Locus<T extends Enum<T> & Allele> {
     private T right;
     private T dominant;
 
+    Locus() {}
+
     public T getLeft() {
         return left;
     }
@@ -19,7 +21,7 @@ public class Locus<T extends Enum<T> & Allele> {
         return dominant;
     }
 
-    public Locus<T> setup(T left, T right) {
+    Locus<T> setup(T left, T right) {
         this.left = left;
         this.right = right;
         dominant = left.ordinal() < right.ordinal() ? left : right;
