@@ -28,6 +28,14 @@ public class Locus<T extends Enum<T> & Allele> {
         return this;
     }
 
+    public boolean has(T gene) {
+        return getLeft() == gene || getRight() == gene;
+    }
+
+    public boolean has(T a, T b) {
+        return (getLeft() == a && getRight() == b) || (getLeft() == b && getRight() == a);
+    }
+
     @Override
     public String toString() {
         return left.getAllele() + "-" + right.getAllele();
