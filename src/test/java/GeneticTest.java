@@ -29,7 +29,6 @@ public class GeneticTest {
             registry.register(gene);
         }
         geneExample2 = registry.register(gene);
-
     }
 
     @Test

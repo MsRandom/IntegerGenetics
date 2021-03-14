@@ -9,33 +9,42 @@ buildscript {
 }
 
 plugins {
-    id "java"
-    id "maven-publish"
+     id "com.jfrog.artifactory" version "4.21.0"
 }
 
-apply plugin: "com.jfrog.artifactory"
+apply plugin: "java"
+apply plugin: "maven-publish"
+
+def build = System.getenv("BUILD_NUMBER") ?: "0"
 
 group = "net.msrandom.genetics"
-version = "1.0.4"
+version = "1.0.6${build == "0" ? "" : "-" + build}"
 archivesBaseName = "IntegerGenetics"
+
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = JavaVersion.VERSION_1_8
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    testImplementation('org.junit.jupiter:junit-jupiter-api:5.8.0-M1')
+    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.8.0-M1',)
     testCompile group: "org.junit.jupiter", name: "junit-jupiter-api", version: "5.8.0-M1"
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = group
-            artifactId = archivesBaseName
+test {
+    useJUnitPlatform()
+    maxHeapSize = '1G'
+}
 
-            from components.java
-        }
-    }
+task sourcesJar(type: Jar, dependsOn: classes) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+}
+
+artifacts {
+    archives sourcesJar
 }
 
 artifactory {
@@ -48,9 +57,26 @@ artifactory {
         }
 
         defaults {
-            publications("jar")
+            publications("mavenJava")
             publishArtifacts = true
             publishPom = true
         }
     }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = group
+            artifactId = archivesBaseName
+
+            from components.java
+            artifact jar
+            artifact sourcesJar
+        }
+    }
+}
+
+if (build != "0") {
+    tasks.build.finalizedBy artifactoryPublish
 }
