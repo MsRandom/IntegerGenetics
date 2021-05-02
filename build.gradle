@@ -50,7 +50,6 @@ publishing {
             artifactId = archivesBaseName
 
             from components.java
-            artifact jar
             artifact sourcesJar
         }
     }
