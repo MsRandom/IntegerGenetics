@@ -8,10 +8,6 @@ buildscript {
     }
 }
 
-plugins {
-     id "com.jfrog.artifactory" version "4.21.0"
-}
-
 apply plugin: "java"
 apply plugin: "maven-publish"
 
@@ -47,26 +43,9 @@ artifacts {
     archives sourcesJar
 }
 
-artifactory {
-    contextUrl = "https://msrandom.net/artifactory"
-    publish {
-        repository {
-            repoKey = "libs-release-local"
-            username = artifactory_username
-            password = artifactory_password
-        }
-
-        defaults {
-            publications("mavenJava")
-            publishArtifacts = true
-            publishPom = true
-        }
-    }
-}
-
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        maven(MavenPublication) {
             groupId = group
             artifactId = archivesBaseName
 
@@ -75,8 +54,18 @@ publishing {
             artifact sourcesJar
         }
     }
+
+    repositories {
+        maven {
+            url = "https://msrandom.net/maven"
+            credentials {
+                username = maven_username
+                password = maven_password
+            }
+        }
+    }
 }
 
 if (build != "0") {
-    tasks.build.finalizedBy artifactoryPublish
+    tasks.build.finalizedBy publish
 }
