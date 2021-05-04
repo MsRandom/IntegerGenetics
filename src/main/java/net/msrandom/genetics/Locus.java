@@ -44,7 +44,7 @@ public class Locus<T extends Enum<T> & Allele> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof Locus<?>)) return false;
         Locus<?> locus = (Locus<?>) o;
         return left.equals(locus.left) &&
                 right.equals(locus.right);
