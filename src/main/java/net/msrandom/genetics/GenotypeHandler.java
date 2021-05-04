@@ -14,7 +14,6 @@ public class GenotypeHandler {
     }
 
     public <E extends Enum<E> & Allele> void set(GeneticsRegistry.Gene<E> type, E left, E right) {
-        geneticCache.put(type, new Locus<>(left, right));
         final int index = type.getPos() / 32;
         final int relative = type.getPos() - (index * 32);
         setter.invoke(index, getter.invoke(index) & ~((1 << type.getSize()) - 1 << relative) | left.ordinal() << relative | right.ordinal() << relative + (type.getSize() >> 1));
@@ -33,6 +32,7 @@ public class GenotypeHandler {
         final E right = values[(value >> size) & most];
         if (locus == null || locus.getLeft() != left || locus.getRight() != right) {
             locus = new Locus<>(left, right);
+            geneticCache.put(type, locus);
         }
         return locus;
     }
