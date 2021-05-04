@@ -14,19 +14,27 @@ public class GenotypeHandler {
     }
 
     public <E extends Enum<E> & Allele> void set(GeneticsRegistry.Gene<E> type, E left, E right) {
-        int index = type.getPos() / 32;
-        int relative = type.getPos() - (index * 32);
+        geneticCache.put(type, new Locus<>(left, right));
+        final int index = type.getPos() / 32;
+        final int relative = type.getPos() - (index * 32);
         setter.invoke(index, getter.invoke(index) & ~((1 << type.getSize()) - 1 << relative) | left.ordinal() << relative | right.ordinal() << relative + (type.getSize() >> 1));
     }
 
     @SuppressWarnings("unchecked")
     public <E extends Enum<E> & Allele> Locus<E> get(GeneticsRegistry.Gene<E> type) {
-        Locus<E> locus = (Locus<E>) geneticCache.computeIfAbsent(type, k -> new Locus<>());
-        int index = type.getPos() / 32;
-        int value = getter.invoke(index) >> type.getPos() - index * 32 & (1 << type.getSize()) - 1;
-        int size = type.getSize() >> 1;
-        int most = (1 << size) - 1;
-        return locus.setup(type.values[value & most], type.values[(value >> size) & most]);
+        Locus<E> locus = (Locus<E>) geneticCache.get(type);
+        final int index = type.getPos() / 32;
+        final int value = getter.invoke(index) >> type.getPos() - index * 32 & (1 << type.getSize()) - 1;
+        final int size = type.getSize() >> 1;
+        final int most = (1 << size) - 1;
+
+        final E[] values = type.getValues();
+        final E left = values[value & most];
+        final E right = values[(value >> size) & most];
+        if (locus == null || locus.getLeft() != left || locus.getRight() != right) {
+            locus = new Locus<>(left, right);
+        }
+        return locus;
     }
 
     @FunctionalInterface

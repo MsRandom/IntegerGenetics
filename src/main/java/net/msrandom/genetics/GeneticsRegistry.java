@@ -1,32 +1,41 @@
 package net.msrandom.genetics;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.IntSupplier;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 
 public class GeneticsRegistry {
+    private final Object2IntMap<Gene<?>> toPosition = new Object2IntOpenHashMap<>();
+    private final AtomicInteger current = new AtomicInteger();
     private final IntSupplier geneticCount;
     private final Runnable addKey;
-    private int current;
 
     public GeneticsRegistry(IntSupplier geneticCount, Runnable addKey) {
         this.geneticCount = geneticCount;
         this.addKey = addKey;
     }
 
-    public <T extends Enum<T> & Allele> Gene<T> register(Gene<T> gene) {
-        gene.pos = current;
-        current += gene.size;
-        if ((current / 32) > geneticCount.getAsInt() - 1) addKey.run();
+    public <T extends Enum<T> & Allele> Gene<T> register(Class<T> geneticClass) {
+        Gene<T> gene = new Gene<>(this, geneticClass);
+        toPosition.put(gene, current.getAndAdd(gene.size));
+        if ((current.get() / 32) > geneticCount.getAsInt() - 1) addKey.run();
         return gene;
     }
 
-    public static class Gene<T extends Enum<T> & Allele> {
-        public final T[] values;
+    public static final class Gene<T extends Enum<T> & Allele> {
+        private final GeneticsRegistry registry;
+        private final T[] values;
         private final int size;
-        private int pos;
 
-        public Gene(Class<T> geneticClass) {
+        private Gene(GeneticsRegistry registry, Class<T> geneticClass) {
+            this.registry = registry;
             this.values = geneticClass.getEnumConstants();
             this.size = (31 - Integer.numberOfLeadingZeros(values.length)) * 2;
+        }
+
+        T[] getValues() {
+            return values;
         }
 
         int getSize() {
@@ -34,7 +43,7 @@ public class GeneticsRegistry {
         }
 
         int getPos() {
-            return pos;
+            return registry.toPosition.get(this);
         }
     }
 }

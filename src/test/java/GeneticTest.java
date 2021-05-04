@@ -23,13 +23,13 @@ public class GeneticTest {
         genetics = new ArrayList<>();
         registry = new GeneticsRegistry(genetics::size, () -> genetics.add(0));
         handler = new GenotypeHandler(genetics::get, genetics::set);
-        geneExample = registry.register(new GeneticsRegistry.Gene<>(AlleleExample.class));
+        geneExample = registry.register(AlleleExample.class);
 
         //For testing using more than one integer's bits can handle(15 + 1 for geneExample2, multiplied by 2 == 32).
         for (int i = 0; i < 15; i++) {
-            registry.register(new GeneticsRegistry.Gene<>(AlleleExample.class));
+            registry.register(AlleleExample.class);
         }
-        geneExample2 = registry.register(new GeneticsRegistry.Gene<>(AlleleExample.class));
+        geneExample2 = registry.register(AlleleExample.class);
     }
 
     @Test

@@ -3,11 +3,15 @@ package net.msrandom.genetics;
 import java.util.Objects;
 
 public class Locus<T extends Enum<T> & Allele> {
-    private T left;
-    private T right;
-    private T dominant;
+    private final T left;
+    private final T right;
+    private final T dominant;
 
-    Locus() {}
+    public Locus(T left, T right) {
+        this.left = left;
+        this.right = right;
+        dominant = left.ordinal() < right.ordinal() ? left : right;
+    }
 
     public T getLeft() {
         return left;
@@ -19,13 +23,6 @@ public class Locus<T extends Enum<T> & Allele> {
 
     public T getDominant() {
         return dominant;
-    }
-
-    Locus<T> setup(T left, T right) {
-        this.left = left;
-        this.right = right;
-        dominant = left.ordinal() < right.ordinal() ? left : right;
-        return this;
     }
 
     public boolean has(T gene) {
