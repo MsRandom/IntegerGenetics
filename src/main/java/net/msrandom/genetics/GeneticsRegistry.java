@@ -43,7 +43,7 @@ public class GeneticsRegistry {
         }
 
         int getPos() {
-            return registry.toPosition.get(this);
+            return registry.toPosition.getInt(this);
         }
     }
 }
