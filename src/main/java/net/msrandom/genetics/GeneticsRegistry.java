@@ -30,8 +30,11 @@ public class GeneticsRegistry {
 
         private Gene(GeneticsRegistry registry, Class<T> geneticClass) {
             this.registry = registry;
-            this.values = geneticClass.getEnumConstants();
-            this.size = (31 - Integer.numberOfLeadingZeros(values.length)) * 2;
+            values = geneticClass.getEnumConstants();
+            if (values.length < 2) {
+                throw new IllegalArgumentException("Tried to register " + geneticClass.getName() + ", but it contained less than the required amount of values(expected at least 2, got " + values.length + ").");
+            }
+            size = (32 - Integer.numberOfLeadingZeros(values.length - 1)) * 2;
         }
 
         T[] getValues() {
@@ -42,7 +45,7 @@ public class GeneticsRegistry {
             return size;
         }
 
-        int getPos() {
+        int getPosition() {
             return registry.toPosition.getInt(this);
         }
     }

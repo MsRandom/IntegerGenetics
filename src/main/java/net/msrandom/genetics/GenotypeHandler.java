@@ -14,22 +14,31 @@ public class GenotypeHandler {
     }
 
     public <E extends Enum<E> & Allele> void set(GeneticsRegistry.Gene<E> type, E left, E right) {
-        final int index = type.getPos() / 32;
-        final int relative = type.getPos() - (index * 32);
-        setter.invoke(index, getter.invoke(index) & ~((1 << type.getSize()) - 1 << relative) | left.ordinal() << relative | right.ordinal() << relative + (type.getSize() >> 1));
+        final int position = type.getPosition();
+        final int index = position / 32;
+        final int relative = position - index * 32;
+        final int size = type.getSize() / 2;
+
+        int storedData = getter.invoke(index) & ~((1 << type.getSize()) - 1 << relative); // Current value of the integer but with the bits we need removed entirely.
+        storedData |= left.ordinal() << relative; // OR the left side to it, ironically on the right
+        storedData |= right.ordinal() << relative + size; // And then OR the right side, after the left side(size indicates the amount of bits it takes)
+
+        setter.invoke(index, storedData);
     }
 
     @SuppressWarnings("unchecked")
     public <E extends Enum<E> & Allele> Locus<E> get(GeneticsRegistry.Gene<E> type) {
         Locus<E> locus = (Locus<E>) geneticCache.get(type);
-        final int index = type.getPos() / 32;
-        final int value = getter.invoke(index) >> type.getPos() - index * 32 & (1 << type.getSize()) - 1;
-        final int size = type.getSize() >> 1;
-        final int most = (1 << size) - 1;
+        final int position = type.getPosition();
+        final int index = position / 32;
+        final int relative = position - index * 32;
+        final int value = getter.invoke(index) >> relative;
+        final int size = type.getSize() / 2;
+        final int max = (1 << size) - 1;
 
         final E[] values = type.getValues();
-        final E left = values[value & most];
-        final E right = values[(value >> size) & most];
+        final E left = values[value & max];
+        final E right = values[(value >> size) & max];
         if (locus == null || locus.getLeft() != left || locus.getRight() != right) {
             locus = new Locus<>(left, right);
             geneticCache.put(type, locus);

@@ -14,7 +14,7 @@ apply plugin: "maven-publish"
 def build = System.getenv("BUILD_NUMBER") ?: "0"
 
 group = "net.msrandom.genetics"
-version = "1.0.7${build == "0" ? "" : "-" + build}"
+version = "1.0.8${build == "0" ? "" : "-" + build}"
 archivesBaseName = "IntegerGenetics"
 
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = JavaVersion.VERSION_1_8
