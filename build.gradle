@@ -44,23 +44,25 @@ artifacts {
     archives sourcesJar
 }
 
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = group
-            artifactId = archivesBaseName
+if (hasProperty("maven_username") && hasProperty("maven_password")) {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = group
+                artifactId = archivesBaseName
 
-            from components.java
-            artifact sourcesJar
+                from components.java
+                artifact sourcesJar
+            }
         }
-    }
 
-    repositories {
-        maven {
-            url = "https://nexus.msrandom.net/repository/maven-releases/"
-            credentials {
-                username = maven_username
-                password = maven_password
+        repositories {
+            maven {
+                url = "https://maven.msrandom.net/repository/root/"
+                credentials {
+                    username = maven_username
+                    password = maven_password
+                }
             }
         }
     }
