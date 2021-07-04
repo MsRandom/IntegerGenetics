@@ -2,7 +2,7 @@ package net.msrandom.genetics;
 
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,8 +14,8 @@ public class RegularUsage {
     private static GeneticsRegistry.Gene<TestGenetics.Allele2> geneExample;
     private static GeneticsRegistry.Gene<TestGenetics.Allele2> geneExample2;
 
-    @BeforeEach
-    public void setUp() {
+    @BeforeAll
+    public static void setup() {
         IntList genetics = new IntArrayList();
         registry = new GeneticsRegistry(genetics::size, () -> genetics.add(0));
         handler = new GenotypeHandler(genetics::getInt, genetics::set);

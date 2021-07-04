@@ -1,6 +1,8 @@
 buildscript {
     repositories {
-        jcenter()
+        maven {
+            url = "https://plugins.gradle.org/m2/"
+        }
     }
 
     dependencies {
@@ -24,10 +26,9 @@ repositories {
 }
 
 dependencies {
-    compile(group: "it.unimi.dsi", name: "fastutil", version: "7.1.0")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.0-M1")
-    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.8.0-M1",)
-    testCompile(group: "org.junit.jupiter", name: "junit-jupiter-api", version: "5.8.0-M1")
+    implementation(group: "it.unimi.dsi", name: "fastutil", version: "7.1.0")
+    testImplementation(group: "org.junit.jupiter", name: "junit-jupiter-api", version: "5.8.0-M1")
+    testImplementation(group: "org.junit.jupiter", name: "junit-jupiter-engine", version: "5.8.0-M1")
 }
 
 test {
